@@ -1,0 +1,112 @@
+# ✅ Voice AI POC — Build & Verification Walkthrough
+
+## What Was Built
+
+A complete FastAPI Voice AI backend in `c:\Users\PMLS\Desktop\voice-chat\` following the approved PRD.
+
+### Files Created (20 Python modules + project files)
+
+| Layer | Files |
+|---|---|
+| **Config** | `app/config.py`, `.env.example` |
+| **STT** | `azure_stt.py`, `groq_stt.py`, `factory.py`, `base.py` |
+| **Brain (LangGraph)** | `state.py`, `schemas.py`, `prompts.py`, `tools.py`, `llm_factory.py`, `graph.py` |
+| **TTS** | `elevenlabs_tts.py`, `kokoro_tts.py`, `factory.py`, `base.py` |
+| **Core** | `session_manager.py`, `pipeline.py` |
+| **API** | `websocket.py`, `rest.py`, `main.py` |
+| **Utils** | `logging.py`, `audio.py` |
+| **Tests** | `test_brain.py`, `test_session_manager.py` |
+| **Project** | `requirements.txt`, `Dockerfile`, `.gitignore`, `README.md` |
+
+---
+
+## Installation Verified
+
+```
+Exit code: 0 — all packages installed successfully
+Python: 3.13.3
+```
+
+Key packages confirmed installed:
+- `fastapi`, `uvicorn`, `websockets`
+- `langchain`, `langgraph`, `langchain-openai`, `langchain-groq`, `langchain-google-genai`
+- `openai`, `groq`, `google-generativeai`, `azure-cognitiveservices-speech`
+- `elevenlabs`, `numpy`, `soundfile`, `scipy`, `structlog`
+
+---
+
+## Server Startup Verified ✅
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+**Startup log:**
+```json
+{"stt": "azure", "llm": "openai/gpt-4o-mini", "tts": "elevenlabs",
+ "host": "0.0.0.0", "port": 8000, "event": "voice_ai_startup"}
+INFO: Application startup complete.
+INFO: Uvicorn running on http://0.0.0.0:8000
+```
+
+---
+
+## API Endpoints Verified ✅
+
+**GET /**
+```json
+{
+  "app": "Voice AI Insight Engine",
+  "version": "1.0.0",
+  "docs": "/docs",
+  "websocket": "ws://localhost:8000/ws/voice/new",
+  "providers": {"stt": "azure", "llm": "openai/gpt-4o-mini", "tts": "elevenlabs"}
+}
+```
+
+**GET /api/health**
+```json
+{
+  "status": "ok",
+  "stt_provider": "azure",
+  "llm_provider": "openai",
+  "llm_model": "gpt-4o-mini",
+  "tts_provider": "elevenlabs",
+  "active_sessions": 0
+}
+```
+
+---
+
+## Next Steps to Start Using It
+
+### 1. Fill in your real API keys in `.env`
+```bash
+OPENAI_API_KEY=sk-...          # Required for LLM
+AZURE_SPEECH_KEY=...           # Required for STT
+AZURE_SPEECH_REGION=eastus
+ELEVENLABS_API_KEY=...         # Required for TTS
+ELEVENLABS_VOICE_ID=21m00Tcm4TlvDq8ikWAM
+```
+
+### 2. Start the dev server with hot-reload
+```bash
+.venv\Scripts\activate
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### 3. Open Swagger UI
+Navigate to **http://localhost:8000/docs** — all REST endpoints are documented and testable.
+
+### 4. Connect a WebSocket client
+```
+ws://localhost:8000/ws/voice/new
+```
+Send binary PCM audio chunks (16kHz, 16-bit mono), then send `{"type":"audio_end"}` to trigger the full STT → LLM → TTS pipeline.
+
+### 5. Switch providers via `.env` (no code changes)
+| What to change | Variable |
+|---|---|
+| Use Groq for STT (faster) | `STT_PROVIDER=groq` |
+| Use Gemini for LLM (free) | `LLM_PROVIDER=gemini` |
+| Use Kokoro TTS (free, local) | `TTS_PROVIDER=kokoro` |

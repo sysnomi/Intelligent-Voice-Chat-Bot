@@ -1,0 +1,38 @@
+# ── Core Framework ────────────────────────────
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+websockets==14.1
+python-dotenv==1.0.1
+pydantic==2.10.6
+pydantic-settings==2.7.1
+
+# ── STT Providers ─────────────────────────────
+azure-cognitiveservices-speech==1.43.0
+groq==0.13.1                        # Groq Whisper STT + Groq LLM
+
+# ── LLM Providers ─────────────────────────────
+openai==1.61.1                      # OpenAI & Azure OpenAI
+google-generativeai==0.8.4          # Google Gemini
+langchain==0.3.19
+langchain-openai==0.3.7
+langchain-google-genai==2.0.9
+langchain-groq==0.3.1
+langgraph==0.2.73
+
+# ── TTS Providers ─────────────────────────────
+elevenlabs==1.13.0                  # ElevenLabs (default)
+# kokoro>=0.9.4                     # Uncomment for self-hosted TTS
+
+# ── Audio Utilities ───────────────────────────
+numpy>=2.0.0
+soundfile==0.12.1
+scipy>=1.14.0
+
+# ── Utilities ─────────────────────────────────
+httpx==0.28.1
+python-multipart==0.0.20
+structlog==24.4.0
+
+# ── Dev / Testing ─────────────────────────────
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
